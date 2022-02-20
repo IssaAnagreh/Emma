@@ -19,7 +19,10 @@ export interface QUESTION {
   isMultipleChoice: boolean;
 }
 
-export default forwardRef(function Question({question}: any, ref: any) {
+export default forwardRef(function Question(
+  {question, error, changeError}: any,
+  ref: any,
+) {
   if (!question) return null;
 
   const {colors, isDark} = useContext(ThemeContext);
@@ -72,6 +75,11 @@ export default forwardRef(function Question({question}: any, ref: any) {
     setChosenOption(question.choices[0]);
   }, [question?.isMultipleChoice]);
 
+  useEffect(() => {
+    if (!error) return;
+    changeError(!input);
+  }, [input]);
+
   return (
     <View
       style={[
@@ -87,7 +95,13 @@ export default forwardRef(function Question({question}: any, ref: any) {
         <TextInput
           style={[
             styles.txtInput,
-            {borderColor: !isDark ? colors.primary : colors.secondary},
+            {
+              borderColor: error
+                ? colors.red
+                : !isDark
+                ? colors.primary
+                : colors.secondary,
+            },
           ]}
           onChangeText={setInput}
           ref={ref}

@@ -1,6 +1,6 @@
 export const DEV = __DEV__;
 // please replace localhost with IP_Address
-export const API_BASE_URL = "http://127.0.0.1:8080/api/v1";
+export const API_BASE_URL = "http://192.168.1.79:8080/api/v1";
 
 export const COLORS = {
   primary: "rgba(1, 124, 137, 1)",
@@ -8,6 +8,7 @@ export const COLORS = {
   tertiary: "rgba(53, 55, 63, 1)",
   light: "white",
   dark: "black",
+  red: "#D8000C",
 };
 
 export const COLORS_LIGHT_THEME = {...COLORS};
