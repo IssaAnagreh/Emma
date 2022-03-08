@@ -1,14 +1,14 @@
 export default {
   bottomTabs: {
-    home: "رئيسية",
+    home: "الرئيسية",
   },
   landingPage: {
-    title: "Welcome To Our Application",
-    next: "Next",
+    title: "أهلاً بك عفي برنامجنا",
+    next: "التالي",
   },
   home: {
-    title: "Questions",
-    submit: "Submit",
-    inputPlaceHolder: "Fill your answer",
+    title: "الأسئلة",
+    submit: "انهاء",
+    inputPlaceHolder: "الرجاء تعبئة الأجوبة",
   },
 };

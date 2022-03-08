@@ -10,6 +10,7 @@ export default function AppButton(
 ) {
   const {children, style} = props;
   const {colors, isDark} = useContext(ThemeContext);
+
   return (
     <TouchableOpacity
       {...props}

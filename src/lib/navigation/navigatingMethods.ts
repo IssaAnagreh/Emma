@@ -1,5 +1,4 @@
-import {createRef} from 'react';
-import {Screens} from '../constants';
+import {createRef} from "react";
 
 export const navigationRef = createRef<any>();
 

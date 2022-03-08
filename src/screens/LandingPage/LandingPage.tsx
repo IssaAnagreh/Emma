@@ -1,26 +1,39 @@
-import {View, StyleSheet, Dimensions} from "react-native";
 import React, {useContext} from "react";
+import {StyleSheet, Dimensions} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {StackNavigationProp} from "@react-navigation/stack";
+import {ParamListBase} from "@react-navigation/native";
+
 import ThemeContext from "../../lib/contexts/ThemeContext";
 import AppText from "../../components/AppText/AppText";
 import AppButton from "../../components/AppButton/AppButton";
 import LocalizationContext from "../../lib/contexts/LocalizationContext";
 import {Screens} from "../../lib/constants";
 
-export default function LandingPage({navigation}: any) {
+type PROPS = {
+  navigation: StackNavigationProp<ParamListBase>;
+};
+
+export default function LandingPage({navigation}: PROPS) {
+  // modularized theme
   const {isDark, colors} = useContext(ThemeContext);
+  // modularized languages in src/lib/locales/[locale].ts
   const {t} = useContext(LocalizationContext);
 
+  // navigate user to the questions page (home)
   const handleNext = () => {
     navigation.navigate(Screens.HOME);
   };
 
   return (
     <SafeAreaView style={[styles.container]}>
+      {/* Abstract button module */}
       <AppButton activeOpacity={1} style={styles.hiddenBtn} />
+      {/* Abstract text module */}
       <AppText bold style={styles.title}>
         {t("landingPage.title")}
       </AppText>
+      {/* navigate to the questions (home) screen */}
       <AppButton onPress={handleNext} style={styles.btn}>
         <AppText
           bold

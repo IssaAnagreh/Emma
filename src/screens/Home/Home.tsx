@@ -1,23 +1,54 @@
-import {StyleSheet, Dimensions, ActivityIndicator} from "react-native";
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  FlatList,
+} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {StackNavigationProp} from "@react-navigation/stack";
+import {ParamListBase} from "@react-navigation/native";
+
+import Question from "./Question/Question";
 import ThemeContext from "../../lib/contexts/ThemeContext";
 import AppText from "../../components/AppText/AppText";
 import AppButton from "../../components/AppButton/AppButton";
 import LocalizationContext from "../../lib/contexts/LocalizationContext";
-import Question from "./Question/Question";
-import {FlatList} from "react-native-gesture-handler";
 import {fetchQuestions, submitAnswers} from "../../lib/apis/questionsApi";
 import {Screens} from "../../lib/constants";
 
-export default function Home({navigation}: any) {
-  const {isDark, colors} = useContext(ThemeContext);
-  const {t} = useContext(LocalizationContext);
-  const questionsRef = useRef([]) as any;
-  const [questions, setQuestions] = useState([]) as any;
-  const [loader, setLoading] = useState(false);
-  const [error, setError] = useState({}) as any;
+type PROPS = {
+  navigation: StackNavigationProp<ParamListBase>;
+};
 
+export type QUESTION = {
+  _id: string;
+  text: string;
+  choices: string[];
+  isMultipleChoice: boolean;
+};
+
+export default function Home({navigation}: PROPS) {
+  // modularized theme
+  const {isDark, colors} = useContext(ThemeContext);
+  // modularized languages in src/lib/locales/[locale].ts
+  const {t} = useContext(LocalizationContext);
+
+  // refs
+  const questionsRef = useRef([]) as any;
+
+  // states
+  const [questions, setQuestions] = useState<QUESTION[]>([]);
+  const [loader, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<{[index: number]: boolean}>({});
+
+  // handle flatList renderItem
   const renderItem = ({item, index}: any) => (
     <Question
       ref={ref => (questionsRef.current[index] = ref)}
@@ -29,38 +60,56 @@ export default function Home({navigation}: any) {
     />
   );
 
-  const submit = () => {
+  // submit answers
+  const submit = useCallback(() => {
+    // UI/UX start submitting loading
     setLoading(true);
-    let error = false;
-    const answers = questionsRef?.current?.map((item: any, index: number) => {
+
+    // empty question occurs variable
+    let error: boolean = false;
+
+    // collect all answers from list's questions
+    const answers: {
+      answer: string;
+      questionId: string;
+    }[] = questionsRef?.current?.map((item: any, index: number) => {
+      // highlight empty answers
       if (!item.answer) {
         setError((prev: any) => ({...(prev || {}), [index]: true}));
         error = true;
       }
+
       return {
         answer: item.answer,
         questionId: item.question?._id,
       };
     });
 
+    // stop if empty question occurs
+    // UI/UX finish submitting loading
     if (error) return setLoading(false);
+
+    // post request
     submitAnswers(answers)
       .then(() => {
+        // navigate back to the landing page
         navigation.navigate(Screens.LANDING_PAGE);
       })
       .catch(error => {
         // TODO
       })
       .finally(() => {
+        // UI/UX finish submitting loading
         setLoading(false);
       });
-  };
+  }, [questionsRef?.current]);
+
+  // useEffect(() => {
+  //   questionsRef.current = questionsRef.current.slice(0, questions.length);
+  // }, [questions]);
 
   useEffect(() => {
-    questionsRef.current = questionsRef.current.slice(0, questions.length);
-  }, [questions]);
-
-  useEffect(() => {
+    // fetch questions from the server-side and set them to the Questions state
     fetchQuestions()
       .then(({data}: any) => setQuestions(data))
       .catch(error => {
@@ -70,11 +119,13 @@ export default function Home({navigation}: any) {
 
   return (
     <SafeAreaView
+      // shift the screen to safe area only from the bottom
       edges={["bottom"]}
       style={[
         styles.container,
         {backgroundColor: isDark ? colors.dark : colors.light},
       ]}>
+      {/* questions list */}
       <FlatList
         data={questions}
         renderItem={renderItem}
@@ -87,8 +138,11 @@ export default function Home({navigation}: any) {
         ]}
         keyExtractor={item => `${item._id}`}
       />
+      {/* submit answers Abstract button module */}
+      {/* if questions are being submitted then disable and show a loader instead of the text */}
       <AppButton disabled={loader} style={styles.btn} onPress={submit}>
         {!loader ? (
+          // Abstract text module
           <AppText
             bold
             style={[

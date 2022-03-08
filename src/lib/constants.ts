@@ -22,7 +22,6 @@ export enum THEMES {
 
 export enum ActionTypes {
   THEME = "THEME",
-  ON_BOARDED = "ON_BOARDED",
 }
 
 export const LOCALES = {

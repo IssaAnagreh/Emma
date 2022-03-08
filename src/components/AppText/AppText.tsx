@@ -1,5 +1,6 @@
+import React, {useContext, useMemo, ReactNode} from "react";
 import {StyleSheet, Text, TextStyle} from "react-native";
-import React, {useContext, useMemo} from "react";
+
 import ThemeContext from "../../lib/contexts/ThemeContext";
 
 export default function AppText({
@@ -10,7 +11,7 @@ export default function AppText({
   thin,
   light,
 }: {
-  children?: any;
+  children?: string | undefined | string[];
   style?: TextStyle | TextStyle[];
   bold?: boolean;
   medium?: boolean;

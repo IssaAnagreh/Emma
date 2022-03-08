@@ -5,80 +5,76 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import {View, TouchableOpacity, StyleSheet, Platform} from "react-native";
+import {View, StyleSheet, Platform, TextInput} from "react-native";
 
 import ThemeContext from "../../../lib/contexts/ThemeContext";
 import AppText from "../../../components/AppText/AppText";
-import {TextInput} from "react-native-gesture-handler";
 import LocalizationContext from "../../../lib/contexts/LocalizationContext";
+import Choice from "./Choice/Choice";
+import {QUESTION} from "../Home";
 
-export interface QUESTION {
-  text: string;
-  type: boolean;
-  choices: string[];
-  isMultipleChoice: boolean;
+interface PROPS {
+  question: QUESTION;
+  error: boolean;
+  changeError: (boo: boolean) => void;
 }
 
 export default forwardRef(function Question(
-  {question, error, changeError}: any,
+  {question, error, changeError}: PROPS,
   ref: any,
 ) {
+  // stop component from being rendered if question is received yet
   if (!question) return null;
 
+  // modularized theme
   const {colors, isDark} = useContext(ThemeContext);
+  // modularized languages in src/lib/locales/[locale].ts
   const {t} = useContext(LocalizationContext);
-  const [chosenOption, setChosenOption] = useState(undefined) as any;
-  const [input, setInput] = useState(undefined) as any;
 
+  // states
+  // if multiple answers question
+  const [chosenOption, setChosenOption] = useState<string | undefined>(
+    undefined,
+  );
+  // if assay question
+  const [input, setInput] = useState<string | undefined>(undefined) as any;
+
+  // the map item's render, if the question is multiple choice
   const handleRenderChoice = (choice: string) => {
-    const isChosen = chosenOption === choice;
+    if (!choice) return null;
+    const isChosen: boolean = chosenOption === choice;
     return (
-      <TouchableOpacity
-        onPress={() => setChosenOption(choice)}
+      <Choice
         key={choice}
-        style={styles.choiceContainer}>
-        <View
-          style={[
-            styles.radioContainer,
-            {
-              backgroundColor: colors.light,
-              borderColor: !isDark ? colors.primary : colors.secondary,
-            },
-          ]}>
-          <View
-            style={
-              isChosen
-                ? [
-                    styles.chosenRadio,
-                    {
-                      backgroundColor: !isDark
-                        ? colors.primary
-                        : colors.secondary,
-                    },
-                  ]
-                : []
-            }
-          />
-        </View>
-        <AppText>{choice}</AppText>
-      </TouchableOpacity>
+        isChosen={isChosen}
+        choice={choice}
+        setChosenOption={setChosenOption}
+      />
     );
   };
 
-  useImperativeHandle(ref, () => ({
-    answer: input ?? chosenOption,
-    question,
-  }));
+  // forwardRef's contents
+  useImperativeHandle(
+    ref,
+    () => ({
+      // answer can be an option from multiple options or a text input
+      answer: input ?? chosenOption,
+      question,
+    }),
+    [input, chosenOption, question],
+  );
 
+  // choose the first option of the multiple options if available
   useEffect(() => {
     if (!question?.isMultipleChoice) return;
     setChosenOption(question.choices[0]);
   }, [question?.isMultipleChoice]);
 
+  // change the question error value if it is empty and highlighted after adding anything to the text input
   useEffect(() => {
     if (!error) return;
     changeError(!input);
-  }, [input]);
+  }, [input, error]);
 
   return (
     <View
@@ -86,11 +82,15 @@ export default forwardRef(function Question(
         styles.container,
         {backgroundColor: isDark ? colors.primary : colors.secondary},
       ]}>
+      {/* Abstract text module */}
       <AppText medium style={[{color: isDark ? colors.light : colors.dark}]}>
         {question.text}?
       </AppText>
+      {/* if question is multiple choice then map the choices */}
       {question?.isMultipleChoice &&
         question?.choices?.map((choice: any) => handleRenderChoice(choice))}
+
+      {/* if question is not multiple choice then show text input field */}
       {!question?.isMultipleChoice && (
         <TextInput
           style={[
@@ -104,7 +104,6 @@ export default forwardRef(function Question(
             },
           ]}
           onChangeText={setInput}
-          ref={ref}
           placeholder={t("home.inputPlaceHolder")}
         />
       )}
@@ -132,7 +131,6 @@ const Elevation = (
     },
   });
 
-const radioSize = 20;
 const styles = StyleSheet.create({
   container: {
     minHeight: 100,
@@ -140,24 +138,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 12.5,
     ...Elevation(3, 3, 0, 4, 0.75, "black"),
-  },
-  choiceContainer: {
-    flexDirection: "row",
-    marginTop: 10,
-  },
-  radioContainer: {
-    width: radioSize,
-    height: radioSize,
-    borderRadius: radioSize / 2,
-    marginRight: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-  },
-  chosenRadio: {
-    width: radioSize - 10,
-    height: radioSize - 10,
-    borderRadius: (radioSize - 10) / 2,
   },
   txtInput: {
     height: 35,

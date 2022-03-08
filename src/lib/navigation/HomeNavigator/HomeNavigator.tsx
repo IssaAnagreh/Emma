@@ -10,7 +10,9 @@ import ThemeContext from "../../contexts/ThemeContext";
 const HomeStack = createStackNavigator();
 
 export const HomeNavigator = ({route}: any) => {
+  // modularized languages in src/lib/locales/[locale].ts
   const {t} = useContext(LocalizationContext);
+  // modularized theme's colors
   const {colors} = useContext(ThemeContext);
 
   return (
@@ -19,6 +21,7 @@ export const HomeNavigator = ({route}: any) => {
         options={{
           headerShown: false,
         }}
+        // screens are modularized so they can be reused from all the files of the app
         name={Screens.LANDING_PAGE}
         component={LandingPage}
       />
@@ -28,6 +31,7 @@ export const HomeNavigator = ({route}: any) => {
           title: t("home.title"),
           headerTintColor: colors.primary,
         }}
+        // screens are modularized so they can be reused from all the files of the app
         name={Screens.HOME}
         component={Home}
       />
