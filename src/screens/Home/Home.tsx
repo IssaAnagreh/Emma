@@ -109,7 +109,7 @@ export default function Home({navigation}: PROPS) {
   //   questionsRef.current = questionsRef.current.slice(0, questions.length);
   // }, [questions]);
 
-  const fetchQuestions = async () => {
+  const handleFetchQuestions = async () => {
     try {
       // fetch questions from the server-side and set them to the Questions state
       const {data}: any = await fetchQuestions();
@@ -120,7 +120,7 @@ export default function Home({navigation}: PROPS) {
   };
 
   useEffect(() => {
-    fetchQuestions();
+    handleFetchQuestions();
   }, []);
 
   return (
