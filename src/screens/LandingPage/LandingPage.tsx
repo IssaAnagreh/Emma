@@ -30,11 +30,11 @@ export default function LandingPage({navigation}: PROPS) {
       {/* Abstract button module */}
       <AppButton activeOpacity={1} style={styles.hiddenBtn} />
       {/* Abstract text module */}
-      <AppText bold style={styles.title}>
-        {t("landingPage.title")}
+      <AppText bold style={styles.title} testID={"text"}>
+        {t("landingPage.title") || "Welcome To Our Application"}
       </AppText>
       {/* navigate to the questions (home) screen */}
-      <AppButton onPress={handleNext} style={styles.btn}>
+      <AppButton onPress={handleNext} style={styles.btn} testID={"nextButton"}>
         <AppText
           bold
           style={[

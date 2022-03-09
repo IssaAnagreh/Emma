@@ -57,6 +57,7 @@ export default function Home({navigation}: PROPS) {
       changeError={(boo: boolean) =>
         setError((prev: any) => ({...prev, [index]: boo}))
       }
+      testID={"list-item"}
     />
   );
 
@@ -108,13 +109,18 @@ export default function Home({navigation}: PROPS) {
   //   questionsRef.current = questionsRef.current.slice(0, questions.length);
   // }, [questions]);
 
+  const fetchQuestions = async () => {
+    try {
+      // fetch questions from the server-side and set them to the Questions state
+      const {data}: any = await fetchQuestions();
+      setQuestions(data);
+    } catch (error) {
+      // error
+    }
+  };
+
   useEffect(() => {
-    // fetch questions from the server-side and set them to the Questions state
-    fetchQuestions()
-      .then(({data}: any) => setQuestions(data))
-      .catch(error => {
-        // TODO
-      });
+    fetchQuestions();
   }, []);
 
   return (
@@ -137,10 +143,15 @@ export default function Home({navigation}: PROPS) {
           },
         ]}
         keyExtractor={item => `${item._id}`}
+        testID={"list"}
       />
       {/* submit answers Abstract button module */}
       {/* if questions are being submitted then disable and show a loader instead of the text */}
-      <AppButton disabled={loader} style={styles.btn} onPress={submit}>
+      <AppButton
+        disabled={loader}
+        style={styles.btn}
+        onPress={submit}
+        testID={"submitButton"}>
         {!loader ? (
           // Abstract text module
           <AppText

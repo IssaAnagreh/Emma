@@ -1,5 +1,5 @@
 import React, {useContext, useMemo, ReactNode} from "react";
-import {StyleSheet, Text, TextStyle} from "react-native";
+import {StyleSheet, Text, TextProps} from "react-native";
 
 import ThemeContext from "../../lib/contexts/ThemeContext";
 
@@ -10,14 +10,14 @@ export default function AppText({
   medium,
   thin,
   light,
+  ...rest
 }: {
   children?: string | undefined | string[];
-  style?: TextStyle | TextStyle[];
   bold?: boolean;
   medium?: boolean;
   thin?: boolean;
   light?: boolean;
-}) {
+} & TextProps) {
   const {isDark, colors} = useContext(ThemeContext);
 
   const fontWeight = useMemo(() => {
@@ -34,6 +34,7 @@ export default function AppText({
 
   return (
     <Text
+      {...rest}
       style={StyleSheet.flatten([
         styles.container,
         {

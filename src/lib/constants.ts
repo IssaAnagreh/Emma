@@ -1,6 +1,6 @@
 export const DEV = __DEV__;
 // please replace localhost with IP_Address
-export const API_BASE_URL = "http://192.168.1.79:8080/api/v1";
+export const API_BASE_URL = "http://192.168.1.76:8080/api/v1";
 
 export const COLORS = {
   primary: "rgba(1, 124, 137, 1)",

@@ -17,10 +17,11 @@ interface PROPS {
   question: QUESTION;
   error: boolean;
   changeError: (boo: boolean) => void;
+  testID: string;
 }
 
 export default forwardRef(function Question(
-  {question, error, changeError}: PROPS,
+  {question, error, changeError, testID}: PROPS,
   ref: any,
 ) {
   // stop component from being rendered if question is received yet
@@ -81,7 +82,8 @@ export default forwardRef(function Question(
       style={[
         styles.container,
         {backgroundColor: isDark ? colors.primary : colors.secondary},
-      ]}>
+      ]}
+      testID={testID}>
       {/* Abstract text module */}
       <AppText medium style={[{color: isDark ? colors.light : colors.dark}]}>
         {question.text}?
